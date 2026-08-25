@@ -7,9 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
@@ -38,35 +38,35 @@
                     <!-- Character Avatar Selection Grid (8 items) -->
                     <div class="grid grid-cols-4 gap-2" id="avatar-select-grid">
                         <button type="button" data-avatar="슬기" class="avatar-option p-2 rounded-xl border border-amber-400 bg-amber-500/20 text-amber-400 flex flex-col items-center gap-1.5 cursor-pointer transition">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkqGxtX4oH7H5ltqGBsQyLG4mABdkPpqxa353YrVL8X8hLMFl_loPkVgTSa3hbMdZTRBkrOCei6A-dvSf0t1fKAE.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="슬기">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha01.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="슬기">
                             <span class="text-[11px] font-bold">슬기</span>
                         </button>
                         <button type="button" data-avatar="데니스" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrAYnv8ww7v7diLLnwZiHPdTFhj2otSaJ5IsV00iynD75hKezLb4pdmha5X3KEUOK1FJx9pA2klaqbulYpFTCn4.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="데니스">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha02.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="데니스">
                             <span class="text-[11px] font-bold">데니스</span>
                         </button>
                         <button type="button" data-avatar="야나기" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkmWuWKz21sbRCD3oE7Eb9cMVZ4cyVZR9SU_7lKXk6u7Ky1NZQ_OdB3XeoxsF2YS3l6oreTkXs3VW0eYI-m4r_Ug.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="야나기">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha03.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="야나기">
                             <span class="text-[11px] font-bold">야나기</span>
                         </button>
                         <button type="button" data-avatar="최배달" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrcv21PFDSAbyYBYfc22-Z-4BSoxcgOksfmO0aGHd4RGQ3XPJJr9ehwnSLISF3w8hbD1xsWlATfbfPpsCTA1pt8.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="최배달">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha04.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="최배달">
                             <span class="text-[11px] font-bold whitespace-nowrap">최배달</span>
                         </button>
                         <button type="button" data-avatar="밍밍" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkq0H7xXeGCbwzfrd65liCdyIGPFrSy-SfOlZNI6PIlz9AV100SsBsp58hmBLf0cIDQ9Q0W7lazLhDYi6OfKUPXg.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="밍밍">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha05.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="밍밍">
                             <span class="text-[11px] font-bold">밍밍</span>
                         </button>
                         <button type="button" data-avatar="스티브" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkpxr64gJzAtYDc8Fj3_XWxT5dTkhSUAFYhAdsXrHqMoaA-EsJYLI1P9QZ-xhaMI7ZbFeMVRKl4cFzi4U5IvdElc.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="스티브">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha06.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="스티브">
                             <span class="text-[11px] font-bold">스티브</span>
                         </button>
                         <button type="button" data-avatar="카트리나" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkknXdx35JCB68ljroo_eRgcTEMFB_wa9UlVN4RK9AvvoUEHkMYX5g1eCQhgsqy8C-8fCw037tj5wrA40OqiGQtkE.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="카트리나">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha07.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="카트리나">
                             <span class="text-[11px] font-bold">카트리나</span>
                         </button>
                         <button type="button" data-avatar="에르난데스" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
-                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkhK8HbJsJKSZE7xEdAviDEqL0dmGYfMX5OGgvzh5PU09xgmLGOYAJE7TAnmyp1VKX9sHu-xP9piZ02clgezB_dI.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="에르난데스">
+                            <img src="https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha08.gif" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm bg-white" alt="에르난데스">
                             <span class="text-[10px] font-bold tracking-tighter">에르난데스</span>
                         </button>
                     </div>
@@ -96,7 +96,7 @@
                 <div class="flex justify-between items-end">
                     <div class="flex items-center gap-3">
                         <div class="flex flex-col items-center gap-1">
-                            <div id="my-avatar-display" class="w-12 h-12 rounded-full bg-slate-800 border border-amber-400 flex items-center justify-center overflow-hidden shadow-inner">
+                            <div id="my-avatar-display" class="w-12 h-12 rounded-full bg-slate-800 border border-amber-400 flex items-center justify-center overflow-hidden shadow-inner bg-white">
                                 <!-- Image will be injected here -->
                             </div>
                             <span id="display-my-name" class="text-[11px] font-semibold text-amber-300 max-w-[70px] truncate">-</span>
@@ -228,27 +228,27 @@
 
     <!-- Application Script -->
     <script>
-        // ==========================================
-        // 🔥 사용자님 진짜 Firebase 설정 (GitHub 배포용)
-        // ==========================================
-        const myFirebaseConfig = {
-            apiKey: "AIzaSyAYAGC2WYwNR3aRDVenZQVT8ydp4zZCQi0",
-            authDomain: "modu-b6089.firebaseapp.com",
-            projectId: "modu-b6089",
-            storageBucket: "modu-b6089.firebasestorage.app",
-            messagingSenderId: "120374545838",
-            appId: "1:120374545838:web:670b4b5973b09823a88c3f",
-            measurementId: "G-XCCBX2Q67V"
+        // ★★★ 여기에 내 Firebase 설정값을 덮어쓰세요 ★★★
+        const firebaseConfig = {
+            // apiKey: "AIzaSy...",
+            // authDomain: "modu-....firebaseapp.com",
+            // projectId: "modu-...",
+            // storageBucket: "modu-....appspot.com",
+            // messagingSenderId: "1234567...",
+            // appId: "1:1234567...:web:...",
+            // measurementId: "G-..."
         };
-        
-        firebase.initializeApp(myFirebaseConfig);
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const appId = 'modu-bank-v1'; 
 
         let currentUser = null;
-        let currentRoomCode = 'MAIN_ROOM'; // 방 하나로 고정
+        let currentRoomCode = 'MAIN_ROOM';
         let myNickname = '';
-        let myAvatar = '슬기'; // 기본 선택값
+        let myAvatar = '슬기';
         let selectedTargetUid = '';
         let selectedTargetName = '';
         
@@ -256,7 +256,6 @@
         let unsubLogs = null;
         let unsubRequests = null;
 
-        // DOM Elements
         const connStatus = document.getElementById('connection-status');
         const screenLobby = document.getElementById('screen-lobby');
         const screenGame = document.getElementById('screen-game');
@@ -308,22 +307,21 @@
         }
         modalCloseBtn.addEventListener('click', () => customModal.classList.add('hidden'));
 
-        // 실제 이미지 URL 매핑
+        // 실제 이미지 URL 매핑 (업데이트 완료)
         function getAvatarUrl(name) {
             const avatars = {
-                '슬기': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkqGxtX4oH7H5ltqGBsQyLG4mABdkPpqxa353YrVL8X8hLMFl_loPkVgTSa3hbMdZTRBkrOCei6A-dvSf0t1fKAE.webp',
-                '데니스': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrAYnv8ww7v7diLLnwZiHPdTFhj2otSaJ5IsV00iynD75hKezLb4pdmha5X3KEUOK1FJx9pA2klaqbulYpFTCn4.webp',
-                '야나기': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkmWuWKz21sbRCD3oE7Eb9cMVZ4cyVZR9SU_7lKXk6u7Ky1NZQ_OdB3XeoxsF2YS3l6oreTkXs3VW0eYI-m4r_Ug.webp',
-                '최배달': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrcv21PFDSAbyYBYfc22-Z-4BSoxcgOksfmO0aGHd4RGQ3XPJJr9ehwnSLISF3w8hbD1xsWlATfbfPpsCTA1pt8.webp',
-                '밍밍': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkq0H7xXeGCbwzfrd65liCdyIGPFrSy-SfOlZNI6PIlz9AV100SsBsp58hmBLf0cIDQ9Q0W7lazLhDYi6OfKUPXg.webp',
-                '스티브': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkpxr64gJzAtYDc8Fj3_XWxT5dTkhSUAFYhAdsXrHqMoaA-EsJYLI1P9QZ-xhaMI7ZbFeMVRKl4cFzi4U5IvdElc.webp',
-                '카트리나': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkknXdx35JCB68ljroo_eRgcTEMFB_wa9UlVN4RK9AvvoUEHkMYX5g1eCQhgsqy8C-8fCw037tj5wrA40OqiGQtkE.webp',
-                '에르난데스': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkhK8HbJsJKSZE7xEdAviDEqL0dmGYfMX5OGgvzh5PU09xgmLGOYAJE7TAnmyp1VKX9sHu-xP9piZ02clgezB_dI.webp',
+                '슬기': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha01.gif',
+                '데니스': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha02.gif',
+                '야나기': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha03.gif',
+                '최배달': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha04.gif',
+                '밍밍': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha05.gif',
+                '스티브': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha06.gif',
+                '카트리나': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha07.gif',
+                '에르난데스': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha08.gif',
             };
             return avatars[name] || `https://ui-avatars.com/api/?name=${name.charAt(0) || 'U'}&background=94A3B8&color=fff&bold=true`;
         }
 
-        // Avatar Selection Logic
         avatarButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 avatarButtons.forEach(b => {
@@ -336,10 +334,8 @@
             });
         });
 
-        // Authentication & Connection Setup
         async function initAuth() {
             try {
-                // 무조건 익명 로그인 (실제 서비스 배포용)
                 await auth.signInAnonymously();
                 currentUser = auth.currentUser;
                 connStatus.textContent = "연결됨";
@@ -347,12 +343,10 @@
             } catch (err) {
                 console.error("Auth error:", err);
                 connStatus.textContent = "연결 오류";
-                showAlert("오류", "데이터베이스 연결에 실패했습니다. Firebase 설정을 확인해주세요.");
             }
         }
         initAuth();
 
-        // Tab Switching
         tabTransfer.addEventListener('click', () => {
             tabTransfer.className = "bg-slate-800 border border-amber-500/50 text-amber-400 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer";
             tabBank.className = "bg-slate-800 border border-slate-700 text-slate-300 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer";
@@ -367,7 +361,6 @@
             panelTransfer.classList.add('hidden');
         });
 
-        // Quick amount buttons for transfer
         document.querySelectorAll('.btn-quick-transfer').forEach(btn => {
             btn.addEventListener('click', () => {
                 const addVal = parseInt(btn.getAttribute('data-amount'));
@@ -376,7 +369,6 @@
             });
         });
 
-        // Quick amount buttons for bank
         document.querySelectorAll('.btn-quick-bank').forEach(btn => {
             btn.addEventListener('click', () => {
                 const addVal = parseInt(btn.getAttribute('data-amount'));
@@ -385,12 +377,10 @@
             });
         });
 
-        // Helper function for Firestore Room Path (단일 방 구조)
-        function getRoomRef() {
-            return db.collection('rooms').doc(currentRoomCode);
+        function getRoomRef(code) {
+            return db.collection('rooms').doc(code);
         }
 
-        // Join Room with Selected Character Avatar
         btnJoinRoom.addEventListener('click', async () => {
             if (!currentUser) return showAlert("오류", "인증이 완료되지 않았습니다. 잠시 후 다시 시도해주세요.");
             myNickname = inputNickname.value.trim();
@@ -401,7 +391,7 @@
             btnJoinRoom.textContent = "입장 중...";
 
             try {
-                const roomDocRef = getRoomRef();
+                const roomDocRef = getRoomRef(currentRoomCode);
                 const playerDocRef = roomDocRef.collection('players').doc(currentUser.uid);
 
                 const docSnap = await playerDocRef.get();
@@ -418,7 +408,6 @@
                         text: `${myNickname} 님이 게임에 참여했습니다.`,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
                 } else {
                     await playerDocRef.update({
                         nickname: myNickname,
@@ -436,7 +425,7 @@
 
             } catch (e) {
                 console.error(e);
-                showAlert("오류", "방 입장에 실패했습니다. Firebase 설정을 올바르게 입력했는지 확인해주세요.");
+                showAlert("오류", "방 입장에 실패했습니다: " + (e.message || e));
             } finally {
                 btnJoinRoom.disabled = false;
                 btnJoinRoom.textContent = "게임 시작하기 (방 입장)";
@@ -475,12 +464,11 @@
                         displayMyName.textContent = myNickname;
                     }
 
-                    // 1. 리더보드 프로필 추가
                     const div = document.createElement('div');
                     div.className = `flex justify-between items-center p-3 rounded-xl border ${isMe ? 'bg-amber-500/10 border-amber-500/40' : 'bg-slate-900 border-slate-700'}`;
                     div.innerHTML = `
                         <div class="font-medium text-sm flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 overflow-hidden shadow-sm">
+                            <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-slate-700 overflow-hidden shadow-sm">
                                 <img src="${getAvatarUrl(avatar)}" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=${avatar.charAt(0)}&background=94A3B8&color=fff'">
                             </span>
                             <span>${p.nickname}</span>
@@ -490,14 +478,13 @@
                     `;
                     listContainer.appendChild(div);
 
-                    // 2. 송금 대상 프로필 창에 추가
                     if (!isMe) {
                         otherPlayersCount++;
                         const isSelected = selectedTargetUid === p.uid;
                         const card = document.createElement('div');
                         card.className = `p-3 rounded-xl border cursor-pointer flex flex-col items-center gap-1.5 transition ${isSelected ? 'bg-amber-500/20 border-amber-400 shadow-md ring-1 ring-amber-400' : 'bg-slate-900 border-slate-700 hover:border-slate-500'}`;
                         card.innerHTML = `
-                            <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shadow-inner">
+                            <div class="w-10 h-10 rounded-full bg-white border border-slate-700 flex items-center justify-center overflow-hidden shadow-inner">
                                 <img src="${getAvatarUrl(avatar)}" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=${avatar.charAt(0)}&background=94A3B8&color=fff'">
                             </div>
                             <div class="text-center w-full">
@@ -549,7 +536,6 @@
                 });
             }, err => console.error("Log sync error:", err));
 
-            // Listen for salary approval requests
             unsubRequests = roomRef.collection('requests').onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
                     if (change.type === 'added' || change.type === 'modified') {
@@ -577,21 +563,20 @@
             }, err => console.error("Requests sync error:", err));
         }
 
-        // Leave Room
         btnLeaveRoom.addEventListener('click', () => {
             if (unsubPlayers) unsubPlayers();
             if (unsubLogs) unsubLogs();
             if (unsubRequests) unsubRequests();
             screenGame.classList.add('hidden');
             screenLobby.classList.remove('hidden');
+            currentRoomCode = 'MAIN_ROOM';
             selectedTargetUid = '';
             selectedTargetName = '';
         });
 
-        // Salary (+300,000)
         btnSalary.addEventListener('click', async () => {
             if (!currentUser) return;
-            const roomRef = getRoomRef();
+            const roomRef = getRoomRef(currentRoomCode);
 
             if (currentPlayersData.length <= 1) {
                 const myPlayerRef = roomRef.collection('players').doc(currentUser.uid);
@@ -634,7 +619,6 @@
             }
         });
 
-        // Request Approval & Rejection Logic
         function hideApprovalModal() {
             approvalModal.classList.add('hidden');
             currentRequestId = null;
@@ -646,7 +630,7 @@
             const reqId = currentRequestId;
             const reqData = currentRequestData;
             
-            const roomRef = getRoomRef();
+            const roomRef = getRoomRef(currentRoomCode);
             const reqRef = roomRef.collection('requests').doc(reqId);
             const targetPlayerRef = roomRef.collection('players').doc(reqData.requesterUid);
 
@@ -686,7 +670,7 @@
             const reqId = currentRequestId;
             const reqData = currentRequestData;
             
-            const roomRef = getRoomRef();
+            const roomRef = getRoomRef(currentRoomCode);
             const reqRef = roomRef.collection('requests').doc(reqId);
 
             hideApprovalModal();
@@ -709,7 +693,6 @@
             }
         });
 
-        // Send Money
         btnSendMoney.addEventListener('click', async () => {
             const targetUid = selectedTargetUid;
             const amount = parseInt(inputTransferAmount.value);
@@ -717,7 +700,7 @@
             if (!targetUid) return showAlert("입력 오류", "돈을 받을 플레이어 프로필을 선택해주세요.");
             if (isNaN(amount) || amount <= 0) return showAlert("입력 오류", "올바른 금액을 입력해주세요.");
 
-            const roomRef = getRoomRef();
+            const roomRef = getRoomRef(currentRoomCode);
             const myRef = roomRef.collection('players').doc(currentUser.uid);
             const targetRef = roomRef.collection('players').doc(targetUid);
 
@@ -751,17 +734,14 @@
             }
         });
 
-        // Pay Bank (Tax / Purchase)
         btnPayBank.addEventListener('click', () => processBankTransaction(false));
-
-        // Receive Bank (Bonus / Event)
         btnReceiveBank.addEventListener('click', () => processBankTransaction(true));
 
         async function processBankTransaction(isReceive) {
             const amount = parseInt(inputBankAmount.value);
             if (isNaN(amount) || amount <= 0) return showAlert("입력 오류", "올바른 금액을 입력해주세요.");
 
-            const roomRef = getRoomRef();
+            const roomRef = getRoomRef(currentRoomCode);
             const myRef = roomRef.collection('players').doc(currentUser.uid);
 
             try {
