@@ -228,7 +228,6 @@
 
     <!-- Application Script -->
     <script>
-        // ★★★ 사용자님의 진짜 Firebase 설정값 적용 완료 ★★★
         const firebaseConfig = {
             apiKey: "AIzaSyAYAGC2WYwNR3aRDVenZQVT8ydp4zZCQi0",
             authDomain: "modu-b6089.firebaseapp.com",
@@ -238,7 +237,6 @@
             appId: "1:120374545838:web:670b4b5973b09823a88c3f",
             measurementId: "G-XCCBX2Q67V"
         };
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -307,7 +305,6 @@
         }
         modalCloseBtn.addEventListener('click', () => customModal.classList.add('hidden'));
 
-        // 실제 고화질 이미지 URL 적용 완료
         function getAvatarUrl(name) {
             const avatars = {
                 '슬기': 'https://c2.img.netmarble.kr/web/board/moma/v/img/guide/cha01.gif',
@@ -409,9 +406,14 @@
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } else {
+                    // 이미 데이터가 남아있던 경우 재입장 처리 (잔고 유지)
                     await playerDocRef.update({
                         nickname: myNickname,
                         avatar: myAvatar
+                    });
+                    await roomDocRef.collection('logs').add({
+                        text: `${myNickname} 님이 다시 연결되었습니다.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
 
@@ -563,16 +565,50 @@
             }, err => console.error("Requests sync error:", err));
         }
 
-        btnLeaveRoom.addEventListener('click', () => {
+        // ==========================================
+        // 🚀 변경된 퇴장 및 기록 삭제 로직
+        // ==========================================
+
+        // 1. 나가기 버튼 클릭 시 데이터베이스에서 즉시 삭제
+        btnLeaveRoom.addEventListener('click', async () => {
+            if (currentUser) {
+                try {
+                    const roomRef = getRoomRef(currentRoomCode);
+                    // 내 기록 완전 삭제
+                    await roomRef.collection('players').doc(currentUser.uid).delete();
+                    // 퇴장 알림 전송
+                    await roomRef.collection('logs').add({
+                        text: `${myNickname} 님이 게임에서 퇴장했습니다.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (e) {
+                    console.error("퇴장 처리 중 오류:", e);
+                }
+            }
+
             if (unsubPlayers) unsubPlayers();
             if (unsubLogs) unsubLogs();
             if (unsubRequests) unsubRequests();
+            
             screenGame.classList.add('hidden');
             screenLobby.classList.remove('hidden');
-            currentRoomCode = 'MAIN_ROOM';
             selectedTargetUid = '';
             selectedTargetName = '';
         });
+
+        // 2. 브라우저 창 닫기, 뒤로 가기, 새로고침 시 즉시 삭제 요청
+        window.addEventListener('beforeunload', () => {
+            if (currentUser && !screenGame.classList.contains('hidden')) {
+                const roomRef = getRoomRef(currentRoomCode);
+                // 최대한 서버에 삭제 요청을 던지고 종료
+                roomRef.collection('players').doc(currentUser.uid).delete();
+                roomRef.collection('logs').add({
+                    text: `${myNickname} 님의 연결이 끊어졌습니다. (퇴장)`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        });
+        // ==========================================
 
         btnSalary.addEventListener('click', async () => {
             if (!currentUser) return;
