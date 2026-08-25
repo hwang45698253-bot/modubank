@@ -253,6 +253,7 @@
         let unsubPlayers = null;
         let unsubLogs = null;
         let unsubRequests = null;
+        let hasJoinedGame = false; // 게임에 정상적으로 참여 중인지 체크하는 플래그
 
         const connStatus = document.getElementById('connection-status');
         const screenLobby = document.getElementById('screen-lobby');
@@ -391,32 +392,21 @@
                 const roomDocRef = getRoomRef(currentRoomCode);
                 const playerDocRef = roomDocRef.collection('players').doc(currentUser.uid);
 
-                const docSnap = await playerDocRef.get();
-                if (!docSnap.exists) {
-                    await playerDocRef.set({
-                        uid: currentUser.uid,
-                        nickname: myNickname,
-                        avatar: myAvatar,
-                        money: 2000000,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    await roomDocRef.collection('logs').add({
-                        text: `${myNickname} 님이 게임에 참여했습니다.`,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } else {
-                    // 이미 데이터가 남아있던 경우 재입장 처리 (잔고 유지)
-                    await playerDocRef.update({
-                        nickname: myNickname,
-                        avatar: myAvatar
-                    });
-                    await roomDocRef.collection('logs').add({
-                        text: `${myNickname} 님이 다시 연결되었습니다.`,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
+                // 신규 입장 시 잔고 200만 원으로 시작
+                await playerDocRef.set({
+                    uid: currentUser.uid,
+                    nickname: myNickname,
+                    avatar: myAvatar,
+                    money: 2000000,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await roomDocRef.collection('logs').add({
+                    text: `${myNickname} 님이 게임에 참여했습니다.`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
+                hasJoinedGame = true;
                 screenLobby.classList.add('hidden');
                 screenGame.classList.remove('hidden');
                 displayRoomCode.textContent = `방: 모두의마블 메인방`;
@@ -435,13 +425,14 @@
         });
 
         let currentPlayersData = [];
+        let initialPlayerCount = -1; // 방에 처음 접속했을 때의 인원수 추적
 
         function startRealtimeSync(roomRef) {
             if (unsubPlayers) unsubPlayers();
             if (unsubLogs) unsubLogs();
             if (unsubRequests) unsubRequests();
 
-            unsubPlayers = roomRef.collection('players').onSnapshot(snapshot => {
+            unsubPlayers = roomRef.collection('players').onSnapshot(async snapshot => {
                 const listContainer = playerListContainer;
                 listContainer.innerHTML = '';
                 targetProfileGrid.innerHTML = '';
@@ -451,6 +442,46 @@
                     const data = doc.data();
                     currentPlayersData.push(data);
                 });
+
+                // 만약 최초 인원수보다 현재 인원수가 줄어들었다면(누군가 나갔다면), 방의 모든 데이터를 초기화하고 전원 강퇴 처리!
+                if (initialPlayerCount !== -1 && currentPlayersData.length < initialPlayerCount) {
+                    if (hasJoinedGame) {
+                        hasJoinedGame = false;
+                        showAlert("알림", "다른 플레이어가 나가서 게임이 초기화되었습니다.");
+                        
+                        // 서버 데이터 싹 비우기
+                        try {
+                            const playersSnap = await roomRef.collection('players').get();
+                            const batchP = db.batch();
+                            playersSnap.forEach(d => batchP.delete(d.ref));
+                            await batchP.commit();
+
+                            const logsSnap = await roomRef.collection('logs').get();
+                            const batchL = db.batch();
+                            logsSnap.forEach(d => batchL.delete(d.ref));
+                            await batchL.commit();
+
+                            const reqSnap = await roomRef.collection('requests').get();
+                            const batchR = db.batch();
+                            reqSnap.forEach(d => batchR.delete(d.ref));
+                            await batchR.commit();
+                        } catch (err) {
+                            console.error("데이터 전체 초기화 중 오류:", err);
+                        }
+
+                        forceBackToLobby();
+                        return;
+                    }
+                }
+
+                // 현재 인원수로 갱신
+                initialPlayerCount = currentPlayersData.length;
+
+                // 방에 남은 사람이 0명이 되면 안전하게 정리
+                if (currentPlayersData.length === 0) {
+                    initialPlayerCount = -1;
+                    return;
+                }
 
                 currentPlayersData.sort((a, b) => b.money - a.money);
 
@@ -565,45 +596,66 @@
             }, err => console.error("Requests sync error:", err));
         }
 
-        // ==========================================
-        // 🚀 변경된 퇴장 및 기록 삭제 로직
-        // ==========================================
+        // 강제로 로비로 돌려보내는 함수
+        function forceBackToLobby() {
+            if (unsubPlayers) unsubPlayers();
+            if (unsubLogs) unsubLogs();
+            if (unsubRequests) unsubRequests();
+            
+            hasJoinedGame = false;
+            initialPlayerCount = -1;
+            screenGame.classList.add('hidden');
+            screenLobby.classList.remove('hidden');
+            selectedTargetUid = '';
+            selectedTargetName = '';
+        }
 
-        // 1. 나가기 버튼 클릭 시 데이터베이스에서 즉시 삭제
-        btnLeaveRoom.addEventListener('click', async () => {
-            if (currentUser) {
+        // ==========================================
+        // 🚪 퇴장 및 강제 초기화 처리
+        // ==========================================
+        async function leaveGameRoom() {
+            if (currentUser && hasJoinedGame) {
+                hasJoinedGame = false;
                 try {
                     const roomRef = getRoomRef(currentRoomCode);
-                    // 내 기록 완전 삭제
+                    // 내 문서 삭제
                     await roomRef.collection('players').doc(currentUser.uid).delete();
-                    // 퇴장 알림 전송
-                    await roomRef.collection('logs').add({
-                        text: `${myNickname} 님이 게임에서 퇴장했습니다.`,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    
+                    // 남은 플레이어가 있는지 확인 후 없으면 전체방 리셋
+                    const remaining = await roomRef.collection('players').get();
+                    if (remaining.empty) {
+                        const logsSnap = await roomRef.collection('logs').get();
+                        const batchL = db.batch();
+                        logsSnap.forEach(d => batchL.delete(d.ref));
+                        await batchL.commit();
+
+                        const reqSnap = await roomRef.collection('requests').get();
+                        const batchR = db.batch();
+                        reqSnap.forEach(d => batchR.delete(d.ref));
+                        await batchR.commit();
+                    } else {
+                        // 다른 사람이 남아있다면 퇴장 로그 기록 (인원 감소를 유발해 나머지 사람도 자동 튕기게 됨)
+                        await roomRef.collection('logs').add({
+                            text: `${myNickname} 님이 게임에서 퇴장했습니다.`,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
                 } catch (e) {
                     console.error("퇴장 처리 중 오류:", e);
                 }
             }
 
-            if (unsubPlayers) unsubPlayers();
-            if (unsubLogs) unsubLogs();
-            if (unsubRequests) unsubRequests();
-            
-            screenGame.classList.add('hidden');
-            screenLobby.classList.remove('hidden');
-            selectedTargetUid = '';
-            selectedTargetName = '';
-        });
+            forceBackToLobby();
+        }
 
-        // 2. 브라우저 창 닫기, 뒤로 가기, 새로고침 시 즉시 삭제 요청
+        btnLeaveRoom.addEventListener('click', leaveGameRoom);
+
         window.addEventListener('beforeunload', () => {
-            if (currentUser && !screenGame.classList.contains('hidden')) {
+            if (currentUser && hasJoinedGame) {
                 const roomRef = getRoomRef(currentRoomCode);
-                // 최대한 서버에 삭제 요청을 던지고 종료
                 roomRef.collection('players').doc(currentUser.uid).delete();
                 roomRef.collection('logs').add({
-                    text: `${myNickname} 님의 연결이 끊어졌습니다. (퇴장)`,
+                    text: `${myNickname} 님의 연결이 끊어졌습니다.`,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             }
