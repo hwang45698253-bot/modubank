@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모두의마블 스마트 뱅크</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold text-amber-400 flex items-center gap-2">
+                <i class="fa-solid fa-vault"></i> 모두의마블 스마트 뱅크
+            </h1>
+            <div id="connection-status" class="text-xs px-2 py-1 rounded bg-red-500/20 text-red-400 border border-red-500/30">
+                연결 중...
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-md w-full mx-auto p-4 flex flex-col gap-6">
+
+        <!-- Screen 1: Room Selection / Creation -->
+        <section id="screen-lobby" class="flex flex-col gap-4 my-auto">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl flex flex-col gap-4">
+                <h2 class="text-lg font-semibold text-center text-slate-200">게임 방 입장</h2>
+                
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm text-slate-400">캐릭터 프로필 선택</label>
+                    <!-- Character Avatar Selection Grid (8 items) -->
+                    <div class="grid grid-cols-4 gap-2" id="avatar-select-grid">
+                        <button type="button" data-avatar="슬기" class="avatar-option p-2 rounded-xl border border-amber-400 bg-amber-500/20 text-amber-400 flex flex-col items-center gap-1.5 cursor-pointer transition">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkqGxtX4oH7H5ltqGBsQyLG4mABdkPpqxa353YrVL8X8hLMFl_loPkVgTSa3hbMdZTRBkrOCei6A-dvSf0t1fKAE.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="슬기">
+                            <span class="text-[11px] font-bold">슬기</span>
+                        </button>
+                        <button type="button" data-avatar="데니스" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrAYnv8ww7v7diLLnwZiHPdTFhj2otSaJ5IsV00iynD75hKezLb4pdmha5X3KEUOK1FJx9pA2klaqbulYpFTCn4.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="데니스">
+                            <span class="text-[11px] font-bold">데니스</span>
+                        </button>
+                        <button type="button" data-avatar="야나기" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkmWuWKz21sbRCD3oE7Eb9cMVZ4cyVZR9SU_7lKXk6u7Ky1NZQ_OdB3XeoxsF2YS3l6oreTkXs3VW0eYI-m4r_Ug.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="야나기">
+                            <span class="text-[11px] font-bold">야나기</span>
+                        </button>
+                        <button type="button" data-avatar="최배달" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrcv21PFDSAbyYBYfc22-Z-4BSoxcgOksfmO0aGHd4RGQ3XPJJr9ehwnSLISF3w8hbD1xsWlATfbfPpsCTA1pt8.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="최배달">
+                            <span class="text-[11px] font-bold whitespace-nowrap">최배달</span>
+                        </button>
+                        <button type="button" data-avatar="밍밍" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkq0H7xXeGCbwzfrd65liCdyIGPFrSy-SfOlZNI6PIlz9AV100SsBsp58hmBLf0cIDQ9Q0W7lazLhDYi6OfKUPXg.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="밍밍">
+                            <span class="text-[11px] font-bold">밍밍</span>
+                        </button>
+                        <button type="button" data-avatar="스티브" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkpxr64gJzAtYDc8Fj3_XWxT5dTkhSUAFYhAdsXrHqMoaA-EsJYLI1P9QZ-xhaMI7ZbFeMVRKl4cFzi4U5IvdElc.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="스티브">
+                            <span class="text-[11px] font-bold">스티브</span>
+                        </button>
+                        <button type="button" data-avatar="카트리나" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkknXdx35JCB68ljroo_eRgcTEMFB_wa9UlVN4RK9AvvoUEHkMYX5g1eCQhgsqy8C-8fCw037tj5wrA40OqiGQtkE.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="카트리나">
+                            <span class="text-[11px] font-bold">카트리나</span>
+                        </button>
+                        <button type="button" data-avatar="에르난데스" class="avatar-option p-2 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 flex flex-col items-center gap-1.5 cursor-pointer transition hover:border-slate-500">
+                            <img src="https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkhK8HbJsJKSZE7xEdAviDEqL0dmGYfMX5OGgvzh5PU09xgmLGOYAJE7TAnmyp1VKX9sHu-xP9piZ02clgezB_dI.webp" class="w-10 h-10 rounded-full object-cover pointer-events-none shadow-sm" alt="에르난데스">
+                            <span class="text-[10px] font-bold tracking-tighter">에르난데스</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm text-slate-400">내 닉네임</label>
+                    <input type="text" id="input-nickname" placeholder="예: 부자왕" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-400 text-slate-100">
+                </div>
+
+                <button id="btn-join-room" class="w-full bg-amber-500 hover:bg-amber-600 active:scale-98 transition text-slate-950 font-bold py-3.5 rounded-xl shadow-lg mt-2 cursor-pointer">
+                    게임 시작하기 (방 입장)
+                </button>
+            </div>
+        </section>
+
+        <!-- Screen 2: Dashboard / In-Game -->
+        <section id="screen-game" class="hidden flex flex-col gap-6">
+            
+            <!-- Room Info & My Card -->
+            <div class="bg-gradient-to-br from-amber-500/20 to-amber-700/10 border border-amber-500/30 p-5 rounded-2xl shadow-xl flex flex-col gap-3">
+                <div class="flex justify-between items-center text-xs text-amber-300 font-medium">
+                    <span id="display-room-code">방: 모두의마블 메인방</span>
+                    <button id="btn-leave-room" class="hover:underline text-red-400 cursor-pointer"><i class="fa-solid fa-arrow-right-from-bracket"></i> 나가기</button>
+                </div>
+
+                <div class="flex justify-between items-end">
+                    <div class="flex items-center gap-3">
+                        <div class="flex flex-col items-center gap-1">
+                            <div id="my-avatar-display" class="w-12 h-12 rounded-full bg-slate-800 border border-amber-400 flex items-center justify-center overflow-hidden shadow-inner">
+                                <!-- Image will be injected here -->
+                            </div>
+                            <span id="display-my-name" class="text-[11px] font-semibold text-amber-300 max-w-[70px] truncate">-</span>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">내 잔고</div>
+                            <div class="text-2xl font-black text-amber-400 mt-0.5" id="display-my-money">0 원</div>
+                        </div>
+                    </div>
+                    <button id="btn-salary" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs px-3 py-2 rounded-lg transition font-bold flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-flag-checkered"></i> 월급 수령 (+30만)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Tabs -->
+            <div class="grid grid-cols-2 gap-3">
+                <button id="tab-transfer" class="bg-slate-800 border border-amber-500/50 text-amber-400 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer">
+                    <i class="fa-solid fa-right-left"></i> 송금 / 지불
+                </button>
+                <button id="tab-bank" class="bg-slate-800 border border-slate-700 text-slate-300 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer">
+                    <i class="fa-solid fa-building-columns"></i> 은행 / 기타
+                </button>
+            </div>
+
+            <!-- Tab Content: Transfer -->
+            <div id="panel-transfer" class="bg-slate-800 border border-slate-700 p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                <h3 class="font-bold text-slate-200 border-b border-slate-700 pb-2"><i class="fa-solid fa-paper-plane text-amber-400"></i> 플레이어 간 송금</h3>
+                
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs text-slate-400">받는 사람 선택 (프로필을 누르세요)</label>
+                    <div id="target-profile-grid" class="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1">
+                        <div class="text-xs text-slate-500 col-span-2 text-center py-3">플레이어 불러오는 중...</div>
+                    </div>
+                    <input type="hidden" id="selected-target-uid" value="">
+                    <div id="selected-target-display" class="text-xs text-amber-400 font-medium bg-slate-900 px-3 py-2 rounded-xl border border-slate-700 flex justify-between items-center">
+                        <span>선택된 받는 사람: <strong id="selected-name-text" class="text-slate-300">없음</strong></span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs text-slate-400">금액 입력</label>
+                    <input type="number" id="input-transfer-amount" placeholder="금액 (원)" step="10000" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div class="grid grid-cols-4 gap-2">
+                    <button class="btn-quick-transfer bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="10000">+1만</button>
+                    <button class="btn-quick-transfer bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="50000">+5만</button>
+                    <button class="btn-quick-transfer bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="100000">+10만</button>
+                    <button class="btn-quick-transfer bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="500000">+50만</button>
+                </div>
+
+                <button id="btn-send-money" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 transition cursor-pointer">
+                    송금하기
+                </button>
+            </div>
+
+            <!-- Tab Content: Bank / Other -->
+            <div id="panel-bank" class="hidden bg-slate-800 border border-slate-700 p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                <h3 class="font-bold text-slate-200 border-b border-slate-700 pb-2"><i class="fa-solid fa-landmark text-amber-400"></i> 은행 업무 및 기타</h3>
+                
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs text-slate-400">은행 거래 금액 입력</label>
+                    <input type="number" id="input-bank-amount" placeholder="금액 (원)" step="10000" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div class="grid grid-cols-4 gap-2">
+                    <button class="btn-quick-bank bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="10000">+1만</button>
+                    <button class="btn-quick-bank bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="50000">+5만</button>
+                    <button class="btn-quick-bank bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="100000">+10만</button>
+                    <button class="btn-quick-bank bg-slate-900 hover:bg-slate-700 text-xs py-2 rounded-lg border border-slate-700 text-slate-300 cursor-pointer" data-amount="500000">+50만</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-1">
+                    <button id="btn-pay-bank" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer text-sm">
+                        <i class="fa-solid fa-building-columns"></i> 은행에 지불
+                    </button>
+                    <button id="btn-receive-bank" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer text-sm">
+                        <i class="fa-solid fa-hand-holding-dollar"></i> 은행에서 수령
+                    </button>
+                </div>
+            </div>
+
+            <!-- Player Leaderboard List -->
+            <div class="bg-slate-800 border border-slate-700 p-5 rounded-2xl shadow-xl flex flex-col gap-3">
+                <h3 class="font-bold text-slate-200 text-sm flex items-center justify-between">
+                    <span><i class="fa-solid fa-users text-amber-400"></i> 참여 플레이어 순위</span>
+                    <span class="text-xs text-slate-400 font-normal">실시간 동기화</span>
+                </h3>
+                <div id="player-list-container" class="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Dynamic List -->
+                </div>
+            </div>
+
+            <!-- Transaction History Log -->
+            <div class="bg-slate-800 border border-slate-700 p-5 rounded-2xl shadow-xl flex flex-col gap-3">
+                <h3 class="font-bold text-slate-200 text-sm">
+                    <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> 최근 거래 내역
+                </h3>
+                <div id="log-container" class="flex flex-col gap-2 max-h-36 overflow-y-auto text-xs text-slate-400 pr-1">
+                    <div>기록이 없습니다.</div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Custom Modal for Notifications / Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-xs w-full shadow-2xl flex flex-col gap-4 text-center">
+            <h4 id="modal-title" class="font-bold text-lg text-amber-400">알림</h4>
+            <p id="modal-message" class="text-sm text-slate-300">내용입니다.</p>
+            <button id="modal-close-btn" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl cursor-pointer">확인</button>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Approval Requests -->
+    <div id="approval-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-xs w-full shadow-2xl flex flex-col gap-4 text-center">
+            <h4 class="font-bold text-lg text-amber-400 animate-pulse"><i class="fa-solid fa-bell"></i> 요청 승인</h4>
+            <p id="approval-message" class="text-sm text-slate-300 leading-relaxed">요청 내용입니다.</p>
+            <div class="flex gap-3 mt-2">
+                <button id="btn-reject" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">거절</button>
+                <button id="btn-approve" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl transition cursor-pointer shadow-lg shadow-amber-500/20">승인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // ==========================================
+        // 🔥 사용자님 진짜 Firebase 설정 (GitHub 배포용)
+        // ==========================================
+        const myFirebaseConfig = {
+            apiKey: "AIzaSyAYAGC2WYwNR3aRDVenZQVT8ydp4zZCQi0",
+            authDomain: "modu-b6089.firebaseapp.com",
+            projectId: "modu-b6089",
+            storageBucket: "modu-b6089.firebasestorage.app",
+            messagingSenderId: "120374545838",
+            appId: "1:120374545838:web:670b4b5973b09823a88c3f",
+            measurementId: "G-XCCBX2Q67V"
+        };
+        
+        firebase.initializeApp(myFirebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let currentRoomCode = 'MAIN_ROOM'; // 방 하나로 고정
+        let myNickname = '';
+        let myAvatar = '슬기'; // 기본 선택값
+        let selectedTargetUid = '';
+        let selectedTargetName = '';
+        
+        let unsubPlayers = null;
+        let unsubLogs = null;
+        let unsubRequests = null;
+
+        // DOM Elements
+        const connStatus = document.getElementById('connection-status');
+        const screenLobby = document.getElementById('screen-lobby');
+        const screenGame = document.getElementById('screen-game');
+        
+        const inputNickname = document.getElementById('input-nickname');
+        const avatarButtons = document.querySelectorAll('.avatar-option');
+        const btnJoinRoom = document.getElementById('btn-join-room');
+        
+        const displayRoomCode = document.getElementById('display-room-code');
+        const displayMyName = document.getElementById('display-my-name');
+        const displayMyMoney = document.getElementById('display-my-money');
+        const myAvatarDisplay = document.getElementById('my-avatar-display');
+        const btnLeaveRoom = document.getElementById('btn-leave-room');
+        const btnSalary = document.getElementById('btn-salary');
+
+        const tabTransfer = document.getElementById('tab-transfer');
+        const tabBank = document.getElementById('tab-bank');
+        const panelTransfer = document.getElementById('panel-transfer');
+        const panelBank = document.getElementById('panel-bank');
+
+        const targetProfileGrid = document.getElementById('target-profile-grid');
+        const selectedNameText = document.getElementById('selected-name-text');
+        const inputTransferAmount = document.getElementById('input-transfer-amount');
+        const btnSendMoney = document.getElementById('btn-send-money');
+
+        const inputBankAmount = document.getElementById('input-bank-amount');
+        const btnPayBank = document.getElementById('btn-pay-bank');
+        const btnReceiveBank = document.getElementById('btn-receive-bank');
+
+        const playerListContainer = document.getElementById('player-list-container');
+        const logContainer = document.getElementById('log-container');
+
+        const customModal = document.getElementById('custom-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        const approvalModal = document.getElementById('approval-modal');
+        const approvalMessage = document.getElementById('approval-message');
+        const btnApprove = document.getElementById('btn-approve');
+        const btnReject = document.getElementById('btn-reject');
+        let currentRequestId = null;
+        let currentRequestData = null;
+
+        function showAlert(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            customModal.classList.remove('hidden');
+        }
+        modalCloseBtn.addEventListener('click', () => customModal.classList.add('hidden'));
+
+        // 실제 이미지 URL 매핑
+        function getAvatarUrl(name) {
+            const avatars = {
+                '슬기': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkqGxtX4oH7H5ltqGBsQyLG4mABdkPpqxa353YrVL8X8hLMFl_loPkVgTSa3hbMdZTRBkrOCei6A-dvSf0t1fKAE.webp',
+                '데니스': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrAYnv8ww7v7diLLnwZiHPdTFhj2otSaJ5IsV00iynD75hKezLb4pdmha5X3KEUOK1FJx9pA2klaqbulYpFTCn4.webp',
+                '야나기': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkmWuWKz21sbRCD3oE7Eb9cMVZ4cyVZR9SU_7lKXk6u7Ky1NZQ_OdB3XeoxsF2YS3l6oreTkXs3VW0eYI-m4r_Ug.webp',
+                '최배달': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkrcv21PFDSAbyYBYfc22-Z-4BSoxcgOksfmO0aGHd4RGQ3XPJJr9ehwnSLISF3w8hbD1xsWlATfbfPpsCTA1pt8.webp',
+                '밍밍': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkq0H7xXeGCbwzfrd65liCdyIGPFrSy-SfOlZNI6PIlz9AV100SsBsp58hmBLf0cIDQ9Q0W7lazLhDYi6OfKUPXg.webp',
+                '스티브': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkpxr64gJzAtYDc8Fj3_XWxT5dTkhSUAFYhAdsXrHqMoaA-EsJYLI1P9QZ-xhaMI7ZbFeMVRKl4cFzi4U5IvdElc.webp',
+                '카트리나': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkknXdx35JCB68ljroo_eRgcTEMFB_wa9UlVN4RK9AvvoUEHkMYX5g1eCQhgsqy8C-8fCw037tj5wrA40OqiGQtkE.webp',
+                '에르난데스': 'https://i.namu.wiki/i/a1_zX2LWjmSBfRp_LQtkkhK8HbJsJKSZE7xEdAviDEqL0dmGYfMX5OGgvzh5PU09xgmLGOYAJE7TAnmyp1VKX9sHu-xP9piZ02clgezB_dI.webp',
+            };
+            return avatars[name] || `https://ui-avatars.com/api/?name=${name.charAt(0) || 'U'}&background=94A3B8&color=fff&bold=true`;
+        }
+
+        // Avatar Selection Logic
+        avatarButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                avatarButtons.forEach(b => {
+                    b.classList.remove('border-amber-400', 'bg-amber-500/20', 'text-amber-400');
+                    b.classList.add('border-slate-700', 'bg-slate-900', 'text-slate-400');
+                });
+                btn.classList.remove('border-slate-700', 'bg-slate-900', 'text-slate-400');
+                btn.classList.add('border-amber-400', 'bg-amber-500/20', 'text-amber-400');
+                myAvatar = btn.getAttribute('data-avatar');
+            });
+        });
+
+        // Authentication & Connection Setup
+        async function initAuth() {
+            try {
+                // 무조건 익명 로그인 (실제 서비스 배포용)
+                await auth.signInAnonymously();
+                currentUser = auth.currentUser;
+                connStatus.textContent = "연결됨";
+                connStatus.className = "text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+            } catch (err) {
+                console.error("Auth error:", err);
+                connStatus.textContent = "연결 오류";
+                showAlert("오류", "데이터베이스 연결에 실패했습니다. Firebase 설정을 확인해주세요.");
+            }
+        }
+        initAuth();
+
+        // Tab Switching
+        tabTransfer.addEventListener('click', () => {
+            tabTransfer.className = "bg-slate-800 border border-amber-500/50 text-amber-400 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer";
+            tabBank.className = "bg-slate-800 border border-slate-700 text-slate-300 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer";
+            panelTransfer.classList.remove('hidden');
+            panelBank.classList.add('hidden');
+        });
+
+        tabBank.addEventListener('click', () => {
+            tabBank.className = "bg-slate-800 border border-amber-500/50 text-amber-400 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer";
+            tabTransfer.className = "bg-slate-800 border border-slate-700 text-slate-300 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer";
+            panelBank.classList.remove('hidden');
+            panelTransfer.classList.add('hidden');
+        });
+
+        // Quick amount buttons for transfer
+        document.querySelectorAll('.btn-quick-transfer').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const addVal = parseInt(btn.getAttribute('data-amount'));
+                const currentVal = parseInt(inputTransferAmount.value) || 0;
+                inputTransferAmount.value = currentVal + addVal;
+            });
+        });
+
+        // Quick amount buttons for bank
+        document.querySelectorAll('.btn-quick-bank').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const addVal = parseInt(btn.getAttribute('data-amount'));
+                const currentVal = parseInt(inputBankAmount.value) || 0;
+                inputBankAmount.value = currentVal + addVal;
+            });
+        });
+
+        // Helper function for Firestore Room Path (단일 방 구조)
+        function getRoomRef() {
+            return db.collection('rooms').doc(currentRoomCode);
+        }
+
+        // Join Room with Selected Character Avatar
+        btnJoinRoom.addEventListener('click', async () => {
+            if (!currentUser) return showAlert("오류", "인증이 완료되지 않았습니다. 잠시 후 다시 시도해주세요.");
+            myNickname = inputNickname.value.trim();
+
+            if (!myNickname) return showAlert("입력 오류", "닉네임을 입력해주세요.");
+
+            btnJoinRoom.disabled = true;
+            btnJoinRoom.textContent = "입장 중...";
+
+            try {
+                const roomDocRef = getRoomRef();
+                const playerDocRef = roomDocRef.collection('players').doc(currentUser.uid);
+
+                const docSnap = await playerDocRef.get();
+                if (!docSnap.exists) {
+                    await playerDocRef.set({
+                        uid: currentUser.uid,
+                        nickname: myNickname,
+                        avatar: myAvatar,
+                        money: 2000000,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    await roomDocRef.collection('logs').add({
+                        text: `${myNickname} 님이 게임에 참여했습니다.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                } else {
+                    await playerDocRef.update({
+                        nickname: myNickname,
+                        avatar: myAvatar
+                    });
+                }
+
+                screenLobby.classList.add('hidden');
+                screenGame.classList.remove('hidden');
+                displayRoomCode.textContent = `방: 모두의마블 메인방`;
+                displayMyName.textContent = myNickname;
+                myAvatarDisplay.innerHTML = `<img src="${getAvatarUrl(myAvatar)}" class="w-full h-full object-cover" alt="내 프로필" onerror="this.src='https://ui-avatars.com/api/?name=${myAvatar.charAt(0)}&background=94A3B8&color=fff'">`;
+
+                startRealtimeSync(roomDocRef);
+
+            } catch (e) {
+                console.error(e);
+                showAlert("오류", "방 입장에 실패했습니다. Firebase 설정을 올바르게 입력했는지 확인해주세요.");
+            } finally {
+                btnJoinRoom.disabled = false;
+                btnJoinRoom.textContent = "게임 시작하기 (방 입장)";
+            }
+        });
+
+        let currentPlayersData = [];
+
+        function startRealtimeSync(roomRef) {
+            if (unsubPlayers) unsubPlayers();
+            if (unsubLogs) unsubLogs();
+            if (unsubRequests) unsubRequests();
+
+            unsubPlayers = roomRef.collection('players').onSnapshot(snapshot => {
+                const listContainer = playerListContainer;
+                listContainer.innerHTML = '';
+                targetProfileGrid.innerHTML = '';
+                
+                currentPlayersData = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    currentPlayersData.push(data);
+                });
+
+                currentPlayersData.sort((a, b) => b.money - a.money);
+
+                let otherPlayersCount = 0;
+
+                currentPlayersData.forEach((p) => {
+                    const isMe = p.uid === currentUser.uid;
+                    const avatar = p.avatar || '슬기';
+
+                    if (isMe) {
+                        displayMyMoney.textContent = p.money.toLocaleString() + " 원";
+                        myAvatarDisplay.innerHTML = `<img src="${getAvatarUrl(avatar)}" class="w-full h-full object-cover" alt="내 프로필" onerror="this.src='https://ui-avatars.com/api/?name=${avatar.charAt(0)}&background=94A3B8&color=fff'">`;
+                        displayMyName.textContent = myNickname;
+                    }
+
+                    // 1. 리더보드 프로필 추가
+                    const div = document.createElement('div');
+                    div.className = `flex justify-between items-center p-3 rounded-xl border ${isMe ? 'bg-amber-500/10 border-amber-500/40' : 'bg-slate-900 border-slate-700'}`;
+                    div.innerHTML = `
+                        <div class="font-medium text-sm flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 overflow-hidden shadow-sm">
+                                <img src="${getAvatarUrl(avatar)}" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=${avatar.charAt(0)}&background=94A3B8&color=fff'">
+                            </span>
+                            <span>${p.nickname}</span>
+                            ${isMe ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">나</span>' : ''}
+                        </div>
+                        <div class="font-bold text-amber-400 text-sm">${p.money.toLocaleString()} 원</div>
+                    `;
+                    listContainer.appendChild(div);
+
+                    // 2. 송금 대상 프로필 창에 추가
+                    if (!isMe) {
+                        otherPlayersCount++;
+                        const isSelected = selectedTargetUid === p.uid;
+                        const card = document.createElement('div');
+                        card.className = `p-3 rounded-xl border cursor-pointer flex flex-col items-center gap-1.5 transition ${isSelected ? 'bg-amber-500/20 border-amber-400 shadow-md ring-1 ring-amber-400' : 'bg-slate-900 border-slate-700 hover:border-slate-500'}`;
+                        card.innerHTML = `
+                            <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shadow-inner">
+                                <img src="${getAvatarUrl(avatar)}" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=${avatar.charAt(0)}&background=94A3B8&color=fff'">
+                            </div>
+                            <div class="text-center w-full">
+                                <div class="text-xs font-bold text-slate-200 truncate">${p.nickname}</div>
+                                <div class="text-[10px] text-amber-400/90 truncate">${p.money.toLocaleString()}원</div>
+                            </div>
+                        `;
+                        card.addEventListener('click', () => {
+                            selectedTargetUid = p.uid;
+                            selectedTargetName = p.nickname;
+                            selectedNameText.textContent = `${p.nickname} (${p.money.toLocaleString()}원)`;
+                            startRealtimeSync(roomRef);
+                        });
+                        targetProfileGrid.appendChild(card);
+                    }
+                });
+
+                if (otherPlayersCount === 0) {
+                    targetProfileGrid.innerHTML = '<div class="text-xs text-slate-500 col-span-2 text-center py-3">다른 플레이어가 없습니다.</div>';
+                } else if (!selectedTargetUid && currentPlayersData.length > 1) {
+                    const firstOther = currentPlayersData.find(p => p.uid !== currentUser.uid);
+                    if (firstOther) {
+                        selectedTargetUid = firstOther.uid;
+                        selectedTargetName = firstOther.nickname;
+                        selectedNameText.textContent = `${firstOther.nickname} (${firstOther.money.toLocaleString()}원)`;
+                    }
+                }
+            }, err => console.error("Player sync error:", err));
+
+            unsubLogs = roomRef.collection('logs').limit(20).onSnapshot(snapshot => {
+                logContainer.innerHTML = '';
+                if (snapshot.empty) {
+                    logContainer.innerHTML = '<div>기록이 없습니다.</div>';
+                    return;
+                }
+                let logs = [];
+                snapshot.forEach(doc => logs.push(doc.data()));
+                logs.sort((a, b) => {
+                    if (!a.timestamp) return 1;
+                    if (!b.timestamp) return -1;
+                    return b.timestamp.toMillis() - a.timestamp.toMillis();
+                });
+
+                logs.forEach(log => {
+                    const d = document.createElement('div');
+                    d.className = "border-b border-slate-700/50 pb-1";
+                    d.textContent = log.text;
+                    logContainer.appendChild(d);
+                });
+            }, err => console.error("Log sync error:", err));
+
+            // Listen for salary approval requests
+            unsubRequests = roomRef.collection('requests').onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === 'added' || change.type === 'modified') {
+                        const req = change.doc.data();
+                        if (req.targetUids && req.targetUids.includes(currentUser.uid)) {
+                            if (!req.approvedUids || !req.approvedUids.includes(currentUser.uid)) {
+                                if (currentRequestId !== change.doc.id) {
+                                    currentRequestId = change.doc.id;
+                                    currentRequestData = req;
+                                    
+                                    approvalMessage.innerHTML = `<span class="text-amber-400 font-bold">${req.requesterName}</span> 님이<br/>월급(300,000원) 수령을 요청했습니다.<br/><span class="text-xs text-slate-400 mt-1 block">(모든 플레이어의 승인이 필요합니다)</span><br/>승인하시겠습니까?`;
+                                    approvalModal.classList.remove('hidden');
+                                }
+                            }
+                        }
+                    }
+                    if (change.type === 'removed') {
+                        if (currentRequestId === change.doc.id) {
+                            approvalModal.classList.add('hidden');
+                            currentRequestId = null;
+                            currentRequestData = null;
+                        }
+                    }
+                });
+            }, err => console.error("Requests sync error:", err));
+        }
+
+        // Leave Room
+        btnLeaveRoom.addEventListener('click', () => {
+            if (unsubPlayers) unsubPlayers();
+            if (unsubLogs) unsubLogs();
+            if (unsubRequests) unsubRequests();
+            screenGame.classList.add('hidden');
+            screenLobby.classList.remove('hidden');
+            selectedTargetUid = '';
+            selectedTargetName = '';
+        });
+
+        // Salary (+300,000)
+        btnSalary.addEventListener('click', async () => {
+            if (!currentUser) return;
+            const roomRef = getRoomRef();
+
+            if (currentPlayersData.length <= 1) {
+                const myPlayerRef = roomRef.collection('players').doc(currentUser.uid);
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const myDoc = await transaction.get(myPlayerRef);
+                        if (!myDoc.exists) throw "플레이어 정보를 찾을 수 없습니다.";
+                        const newMoney = myDoc.data().money + 300000;
+                        transaction.update(myPlayerRef, { money: newMoney });
+
+                        const logRef = roomRef.collection('logs').doc();
+                        transaction.set(logRef, {
+                            text: `${myNickname} 님이 월급 300,000원을 수령했습니다. (혼자이므로 자동 승인)`,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    });
+                    showAlert("완료", "참여자가 혼자이므로 즉시 수령되었습니다.");
+                } catch (e) {
+                    console.error(e);
+                    showAlert("오류", "월급 수령 중 문제가 발생했습니다.");
+                }
+                return;
+            }
+
+            try {
+                const targetUids = currentPlayersData.filter(p => p.uid !== currentUser.uid).map(p => p.uid);
+                await roomRef.collection('requests').add({
+                    type: 'salary',
+                    requesterUid: currentUser.uid,
+                    requesterName: myNickname,
+                    amount: 300000,
+                    targetUids: targetUids,
+                    approvedUids: [],
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showAlert("요청 전송", "다른 모든 플레이어에게 월급 수령 승인을 요청했습니다.\n전원 승인 시 지급됩니다.");
+            } catch (e) {
+                console.error(e);
+                showAlert("오류", "요청 전송 중 문제가 발생했습니다.");
+            }
+        });
+
+        // Request Approval & Rejection Logic
+        function hideApprovalModal() {
+            approvalModal.classList.add('hidden');
+            currentRequestId = null;
+            currentRequestData = null;
+        }
+
+        btnApprove.addEventListener('click', async () => {
+            if (!currentRequestId || !currentRequestData) return;
+            const reqId = currentRequestId;
+            const reqData = currentRequestData;
+            
+            const roomRef = getRoomRef();
+            const reqRef = roomRef.collection('requests').doc(reqId);
+            const targetPlayerRef = roomRef.collection('players').doc(reqData.requesterUid);
+
+            hideApprovalModal();
+
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const reqDoc = await transaction.get(reqRef);
+                    if (!reqDoc.exists) throw "이미 취소되거나 완료된 요청입니다.";
+
+                    const data = reqDoc.data();
+                    const newApprovedUids = [...(data.approvedUids || []), currentUser.uid];
+
+                    if (newApprovedUids.length >= (data.targetUids || []).length) {
+                        const playerDoc = await transaction.get(targetPlayerRef);
+                        if (playerDoc.exists) {
+                            transaction.update(targetPlayerRef, { money: playerDoc.data().money + data.amount });
+                        }
+                        transaction.delete(reqRef);
+
+                        const logRef = roomRef.collection('logs').doc();
+                        transaction.set(logRef, {
+                            text: `모든 플레이어의 승인으로 ${data.requesterName} 님이 월급을 수령했습니다.`,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        transaction.update(reqRef, { approvedUids: newApprovedUids });
+                    }
+                });
+            } catch (e) {
+                showAlert("안내", e.toString());
+            }
+        });
+
+        btnReject.addEventListener('click', async () => {
+            if (!currentRequestId || !currentRequestData) return;
+            const reqId = currentRequestId;
+            const reqData = currentRequestData;
+            
+            const roomRef = getRoomRef();
+            const reqRef = roomRef.collection('requests').doc(reqId);
+
+            hideApprovalModal();
+
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const reqDoc = await transaction.get(reqRef);
+                    if (!reqDoc.exists) throw "이미 처리된 요청입니다.";
+
+                    transaction.delete(reqRef);
+
+                    const logRef = roomRef.collection('logs').doc();
+                    transaction.set(logRef, {
+                        text: `${myNickname} 님의 거절로 ${reqData.requesterName} 님의 월급 요청이 취소되었습니다.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+            } catch (e) {
+                showAlert("안내", e.toString());
+            }
+        });
+
+        // Send Money
+        btnSendMoney.addEventListener('click', async () => {
+            const targetUid = selectedTargetUid;
+            const amount = parseInt(inputTransferAmount.value);
+
+            if (!targetUid) return showAlert("입력 오류", "돈을 받을 플레이어 프로필을 선택해주세요.");
+            if (isNaN(amount) || amount <= 0) return showAlert("입력 오류", "올바른 금액을 입력해주세요.");
+
+            const roomRef = getRoomRef();
+            const myRef = roomRef.collection('players').doc(currentUser.uid);
+            const targetRef = roomRef.collection('players').doc(targetUid);
+
+            try {
+                let targetName = "";
+                await db.runTransaction(async (transaction) => {
+                    const myDoc = await transaction.get(myRef);
+                    const targetDoc = await transaction.get(targetRef);
+
+                    if (!myDoc.exists || !targetDoc.exists) throw "플레이어 정보를 찾을 수 없습니다.";
+
+                    const myMoney = myDoc.data().money;
+                    if (myMoney < amount) throw "잔액이 부족합니다!";
+
+                    targetName = targetDoc.data().nickname;
+
+                    transaction.update(myRef, { money: myMoney - amount });
+                    transaction.update(targetRef, { money: targetDoc.data().money + amount });
+
+                    const logRef = roomRef.collection('logs').doc();
+                    transaction.set(logRef, {
+                        text: `${myNickname} 님이 ${targetName} 님에게 ${amount.toLocaleString()}원을 송금했습니다.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                inputTransferAmount.value = '';
+                showAlert("송금 완료", `${targetName} 님에게 ${amount.toLocaleString()}원을 송금했습니다.`);
+            } catch (e) {
+                showAlert("송금 실패", e.toString());
+            }
+        });
+
+        // Pay Bank (Tax / Purchase)
+        btnPayBank.addEventListener('click', () => processBankTransaction(false));
+
+        // Receive Bank (Bonus / Event)
+        btnReceiveBank.addEventListener('click', () => processBankTransaction(true));
+
+        async function processBankTransaction(isReceive) {
+            const amount = parseInt(inputBankAmount.value);
+            if (isNaN(amount) || amount <= 0) return showAlert("입력 오류", "올바른 금액을 입력해주세요.");
+
+            const roomRef = getRoomRef();
+            const myRef = roomRef.collection('players').doc(currentUser.uid);
+
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const myDoc = await transaction.get(myRef);
+                    if (!myDoc.exists) throw "플레이어 정보를 찾을 수 없습니다.";
+                    const currentMoney = myDoc.data().money;
+                    if (!isReceive && currentMoney < amount) throw "잔액이 부족합니다!";
+
+                    const newMoney = isReceive ? currentMoney + amount : currentMoney - amount;
+                    transaction.update(myRef, { money: newMoney });
+
+                    const logRef = roomRef.collection('logs').doc();
+                    transaction.set(logRef, {
+                        text: isReceive 
+                            ? `${myNickname} 님이 은행에서 ${amount.toLocaleString()}원을 수령했습니다.`
+                            : `${myNickname} 님이 은행에 ${amount.toLocaleString()}원을 지불했습니다.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                inputBankAmount.value = '';
+                showAlert("완료", isReceive ? `${amount.toLocaleString()}원을 수령했습니다.` : `${amount.toLocaleString()}원을 지불했습니다.`);
+            } catch (e) {
+                showAlert("거래 실패", e.toString());
+            }
+        }
+    </script>
+</body>
+</html>
